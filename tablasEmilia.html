@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emilia Aguilar aprende las tablas</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;min-height:100vh;background:linear-gradient(160deg,#1a4a2e 0%,#2d6a4f 40%,#1a3a5c 100%);overflow-x:hidden;}
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0;}
+.star{position:absolute;border-radius:50%;background:#fff;animation:twinkle 2s infinite alternate;}
+@keyframes twinkle{from{opacity:.15}to{opacity:.85}}
+.container{position:relative;z-index:1;max-width:820px;margin:0 auto;padding:20px 16px 60px;}
+
+/* HEADER */
+.header{text-align:center;padding:28px 0 18px;}
+.header .animals{font-size:2rem;margin-bottom:8px;}
+.header h1{font-family:'Fredoka One',cursive;font-size:clamp(1.8rem,6vw,3rem);background:linear-gradient(135deg,#a8edaa,#ffd166,#f4a261);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;margin-bottom:6px;}
+.header p{color:rgba(255,255,255,.6);font-size:.95rem;font-weight:700;}
+
+/* TABLA SELECTOR */
+.selector-section{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);border-radius:28px;padding:22px;margin-bottom:24px;backdrop-filter:blur(12px);}
+.selector-title{font-family:'Fredoka One',cursive;color:#ffd166;font-size:1.25rem;margin-bottom:14px;text-align:center;}
+.tabla-btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:12px;}
+.tbl-btn{font-family:'Fredoka One',cursive;font-size:1rem;padding:10px 18px;border-radius:50px;border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);cursor:pointer;transition:all .2s;}
+.tbl-btn:hover,.tbl-btn.active{background:rgba(168,237,170,.25);border-color:#a8edaa;color:#fff;transform:scale(1.06);}
+.tbl-btn.all-btn.active{background:rgba(244,162,97,.3);border-color:#f4a261;color:#fff;}
+.tbl-btn.all-btn{border-color:#f4a261;color:#f4a261;}
+
+/* INFO TABLA */
+.info-section{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.12);border-radius:24px;padding:20px 18px;margin-bottom:24px;backdrop-filter:blur(10px);}
+.info-title{font-family:'Fredoka One',cursive;color:#a8edaa;font-size:1.2rem;margin-bottom:14px;text-align:center;}
+.tabla-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:9px;}
+.tabla-row{display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.07);border-radius:14px;padding:10px 14px;transition:transform .2s;}
+.tabla-row:hover{transform:translateX(5px);}
+.t-animal{font-size:1.3rem;width:30px;text-align:center;}
+.t-op{font-family:'Fredoka One',cursive;font-size:1.1rem;color:#fff;flex:1;}
+.t-res{font-family:'Fredoka One',cursive;font-size:1.5rem;background:linear-gradient(135deg,#ffd166,#f4a261);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+/* SCORE */
+.score-row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;}
+.score-pill{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);border-radius:50px;padding:7px 18px;color:#fff;font-weight:800;font-size:.88rem;display:flex;align-items:center;gap:5px;backdrop-filter:blur(8px);}
+.score-pill.green{border-color:#a8edaa55;color:#a8edaa;}
+.score-pill.red{border-color:#f4616155;color:#f48c8c;}
+
+/* PROGRESS */
+.prog-wrap{background:rgba(255,255,255,.12);border-radius:50px;height:13px;margin-bottom:6px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:50px;background:linear-gradient(90deg,#a8edaa,#ffd166,#f4a261);transition:width .5s ease;}
+.prog-label{text-align:center;color:rgba(255,255,255,.55);font-size:.88rem;font-weight:700;margin-bottom:20px;}
+
+/* LEVEL TABS */
+.level-tabs{display:flex;gap:10px;justify-content:center;margin-bottom:22px;flex-wrap:wrap;}
+.lvl-tab{font-family:'Fredoka One',cursive;font-size:.95rem;padding:9px 20px;border-radius:50px;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.07);color:rgba(255,255,255,.5);cursor:pointer;transition:all .2s;}
+.lvl-tab.active{color:#fff;transform:scale(1.05);}
+.lvl-tab.t1.active{background:rgba(168,237,170,.25);border-color:#a8edaa;}
+.lvl-tab.t2.active{background:rgba(255,209,102,.25);border-color:#ffd166;}
+.lvl-tab.t3.active{background:rgba(244,162,97,.25);border-color:#f4a261;}
+
+/* SECTION CARD */
+.sec-card{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.12);border-radius:28px;padding:26px 22px;margin-bottom:24px;backdrop-filter:blur(12px);}
+.level-badge{display:inline-flex;align-items:center;gap:7px;padding:6px 18px;border-radius:50px;font-weight:800;font-size:.88rem;margin-bottom:12px;}
+.badge-1{background:rgba(168,237,170,.2);color:#a8edaa;border:1.5px solid #a8edaa55;}
+.badge-2{background:rgba(255,209,102,.2);color:#ffd166;border:1.5px solid #ffd16655;}
+.badge-3{background:rgba(244,162,97,.2);color:#f4a261;border:1.5px solid #f4a26155;}
+.sec-title{font-family:'Fredoka One',cursive;font-size:1.3rem;margin-bottom:16px;}
+
+/* QUESTION BOX */
+.q-box{background:rgba(0,0,0,.25);border-radius:20px;padding:20px;margin-bottom:16px;text-align:center;border:1.5px solid rgba(255,255,255,.1);}
+.q-text{font-family:'Fredoka One',cursive;font-size:clamp(1.6rem,5vw,2.4rem);color:#fff;margin-bottom:8px;line-height:1.2;}
+.q-sub{color:rgba(255,255,255,.55);font-size:.9rem;}
+
+/* GROUPS */
+.groups-row{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:12px 0 6px;}
+.group-box{background:rgba(255,255,255,.1);border:2px dashed rgba(255,255,255,.3);border-radius:16px;padding:10px 12px;display:flex;flex-wrap:wrap;gap:4px;justify-content:center;min-width:56px;min-height:56px;align-items:center;}
+.item-em{font-size:1.5rem;}
+.grp-lbl{text-align:center;color:rgba(255,255,255,.45);font-size:.75rem;font-weight:700;margin-top:4px;}
+
+/* OPTIONS */
+.opts-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:4px;}
+.opt-btn{font-family:'Fredoka One',cursive;font-size:1.3rem;padding:14px 10px;border-radius:18px;border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.opt-btn:hover:not(:disabled){background:rgba(168,237,170,.2);border-color:#a8edaa;transform:scale(1.04);}
+.opt-btn.correct{background:rgba(168,237,170,.35)!important;border-color:#a8edaa!important;animation:pop .3s ease;}
+.opt-btn.wrong{background:rgba(244,97,97,.3)!important;border-color:#f46161!important;animation:shake .3s ease;}
+@keyframes pop{0%{transform:scale(.9)}60%{transform:scale(1.1)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+
+/* FEEDBACK */
+.feedback{font-family:'Fredoka One',cursive;font-size:1.15rem;min-height:36px;text-align:center;padding:7px;border-radius:12px;margin-top:8px;transition:all .3s;}
+.feedback.correct{color:#a8edaa;}
+.feedback.wrong{color:#f48c8c;}
+
+/* NEXT BTN */
+.next-btn{font-family:'Fredoka One',cursive;font-size:1rem;padding:11px 28px;border-radius:50px;border:none;background:linear-gradient(135deg,#2d6a4f,#52b788);color:#fff;cursor:pointer;margin-top:12px;display:none;transition:all .2s;box-shadow:0 4px 16px rgba(82,183,136,.4);}
+.next-btn.show{display:inline-block;animation:fadeUp .35s ease;}
+.next-btn:hover{transform:scale(1.05);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* TIMER */
+.timer-wrap{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:14px;}
+.timer-circle{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1.6rem;color:#fff;position:relative;flex-shrink:0;}
+.timer-circle svg{position:absolute;inset:0;transform:rotate(-90deg);}
+.timer-circle .num{position:relative;z-index:1;}
+.timer-bar{flex:1;background:rgba(255,255,255,.12);border-radius:50px;height:14px;overflow:hidden;max-width:220px;}
+.timer-fill{height:100%;border-radius:50px;transition:width .1s linear;background:linear-gradient(90deg,#a8edaa,#ffd166);}
+.timer-fill.urgent{background:linear-gradient(90deg,#f46161,#ff9a3c);}
+
+/* CELEBRATION */
+.celebration{display:none;text-align:center;padding:28px 16px;}
+.celebration.show{display:block;animation:fadeUp .5s ease;}
+.celebration h2{font-family:'Fredoka One',cursive;font-size:clamp(1.8rem,5vw,2.8rem);background:linear-gradient(135deg,#a8edaa,#ffd166,#f4a261);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px;}
+.celebration p{color:rgba(255,255,255,.7);font-size:1rem;margin-bottom:18px;}
+.big-em{font-size:3.2rem;animation:spin 1.5s linear infinite;display:inline-block;}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.restart-btn{font-family:'Fredoka One',cursive;font-size:1rem;padding:12px 26px;border-radius:50px;border:none;background:linear-gradient(135deg,#f4a261,#e76f51);color:#fff;cursor:pointer;box-shadow:0 4px 16px rgba(244,162,97,.4);transition:transform .2s;margin:5px;}
+.restart-btn:hover{transform:scale(1.06);}
+.restart-btn.sec{background:linear-gradient(135deg,#2d6a4f,#52b788);}
+
+@media(max-width:480px){.opts-grid{grid-template-columns:1fr 1fr;}.opt-btn{font-size:1.1rem;padding:12px 8px;}.tabla-grid{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="animals">🦔 🦉 🐿️ 🦊 🐰 🦝 🐦 🐸 🦋 🐺</div>
+    <h1>Emilia Aguilar<br>aprende las tablas 🌟</h1>
+    <p>¡Elige una tabla y practica los 3 niveles!</p>
+  </div>
+
+  <!-- SELECTOR DE TABLA -->
+  <div class="selector-section">
+    <div class="selector-title">📚 ¿Qué tabla quieres practicar?</div>
+    <div class="tabla-btns" id="tablaSelector"></div>
+    <div style="text-align:center">
+      <button class="tbl-btn all-btn" id="btnTodas" onclick="selectTabla('todas')">🌟 ¡Todas las tablas!</button>
+    </div>
+  </div>
+
+  <!-- INFO DE LA TABLA -->
+  <div class="info-section" id="infoSection">
+    <div class="info-title" id="infoTitle">📖 Aprendamos la tabla</div>
+    <div class="tabla-grid" id="tablaGrid"></div>
+  </div>
+
+  <!-- SCORE -->
+  <div class="score-row">
+    <div class="score-pill green">✅ Correctas: <strong id="sc">0</strong></div>
+    <div class="score-pill red">❌ Errores: <strong id="se">0</strong></div>
+    <div class="score-pill">🔥 Racha: <strong id="sr">0</strong></div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="prog-wrap"><div class="prog-fill" id="pFill" style="width:0%"></div></div>
+  <div class="prog-label" id="pLabel">Pregunta 0 de 10</div>
+
+  <!-- NIVEL TABS -->
+  <div class="level-tabs">
+    <div class="lvl-tab t1 active" id="tab1" onclick="goLevel(1)">🌱 Nivel 1 · Dibujos</div>
+    <div class="lvl-tab t2" id="tab2" onclick="goLevel(2)">⭐ Nivel 2 · Multiplicación</div>
+    <div class="lvl-tab t3" id="tab3" onclick="goLevel(3)">⏱️ Nivel 3 · Contrarreloj</div>
+  </div>
+
+  <!-- NIVEL 1 -->
+  <div class="sec-card" id="sec1">
+    <div class="level-badge badge-1">🌱 Nivel 1 — Cuenta los animalitos</div>
+    <div class="sec-title" style="color:#a8edaa">🎨 ¿Cuántos hay en total?</div>
+    <div id="q1box"></div>
+    <div class="celebration" id="cel1">
+      <div class="big-em">🌟</div>
+      <h2>¡Nivel 1 completado! 🎉</h2>
+      <p>¡Contaste todos los animalitos! ¡Eres increíble, Emilia! 🦔</p>
+      <button class="restart-btn sec" onclick="goLevel(2)">Ir al Nivel 2 ➡️</button>
+      <button class="restart-btn" onclick="restartLevel(1)">🔄 Repetir</button>
+    </div>
+  </div>
+
+  <!-- NIVEL 2 -->
+  <div class="sec-card" id="sec2" style="display:none">
+    <div class="level-badge badge-2">⭐ Nivel 2 — Elige la respuesta</div>
+    <div class="sec-title" style="color:#ffd166">🔢 ¿Cuánto es?</div>
+    <div id="q2box"></div>
+    <div class="celebration" id="cel2">
+      <div class="big-em">🏆</div>
+      <h2>¡Nivel 2 completado! 🎊</h2>
+      <p>¡Eres una campeona de las multiplicaciones! 🦊</p>
+      <button class="restart-btn sec" onclick="goLevel(3)">Ir al Nivel 3 ➡️</button>
+      <button class="restart-btn" onclick="restartLevel(2)">🔄 Repetir</button>
+    </div>
+  </div>
+
+  <!-- NIVEL 3 -->
+  <div class="sec-card" id="sec3" style="display:none">
+    <div class="level-badge badge-3">⏱️ Nivel 3 — ¡Contrarreloj!</div>
+    <div class="sec-title" style="color:#f4a261">🚀 14 segundos para responder</div>
+    <div id="q3box"></div>
+    <div class="celebration" id="cel3">
+      <div class="big-em">🎉</div>
+      <h2>¡Lo lograste, Emilia! 🦉🌟</h2>
+      <p id="finalMsg">¡Completaste los 3 niveles!</p>
+      <button class="restart-btn sec" onclick="selectTabla(currentTabla)">🔄 Repetir tabla</button>
+      <button class="restart-btn" onclick="selectTabla('todas')">🌟 ¡Todas las tablas!</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── Stars ──
+(function(){const c=document.getElementById('stars');for(let i=0;i<55;i++){const d=document.createElement('div');d.className='star';const s=Math.random()*2.5+.8;d.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*3}s;animation-duration:${1.5+Math.random()*2}s`;c.appendChild(d);}})();
+
+// ── DATA ──
+const ANIMALS=['🐿️','🦔','🦉','🦊','🐰','🦝','🐦','🐸','🦋','🐺'];
+const ANIMAL_NAMES=['ardillas','erizos','búhos','zorros','conejitos','mapaches','pajaritos','ranitas','mariposas','lobitos'];
+
+function getTablaRows(t){
+  return Array.from({length:10},(_,i)=>({n:i+1,r:t*(i+1),animal:ANIMALS[i],name:ANIMAL_NAMES[i]}));
+}
+
+function makeOpts(correct, tabla){
+  const s=new Set([correct]);
+  const all=Array.from({length:10},(_,i)=>tabla*(i+1));
+  const near=[correct-3,correct-tabla,correct+tabla,correct+3,correct-1,correct+1];
+  [...near,...all].forEach(v=>{if(v>0&&v!==correct)s.add(v);});
+  const arr=shuffleArr([...s]).slice(0,3);
+  arr.push(correct);
+  return shuffleArr(arr);
+}
+
+// ── State ──
+let currentTabla=3, currentRows=[], currentLevel=1;
+let sc=0,se=0,sr=0,answered=0,totalQ=10;
+let q1idx=0,q2idx=0,q3idx=0;
+let timerInterval=null;
+
+// ── Score ──
+function updScore(){document.getElementById('sc').textContent=sc;document.getElementById('se').textContent=se;document.getElementById('sr').textContent=sr;}
+function updProg(){const p=Math.round(answered/totalQ*100);document.getElementById('pFill').style.width=p+'%';document.getElementById('pLabel').textContent=`Pregunta ${answered} de ${totalQ}`;}
+
+// ── Utils ──
+function shuffleArr(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+const praise=['¡Correcto! 🌟','¡Exacto! 🎉','¡Genial! ⭐','¡Así se hace! 🏆','¡Increíble! 🦋'];
+const oops=['¡Casi! 💪 Era','¡No te rindas! Era','¡Sigue! La correcta era','¡Tú puedes! Era'];
+
+// ── Build tabla selector ──
+(function(){
+  const wrap=document.getElementById('tablaSelector');
+  for(let t=1;t<=10;t++){
+    const b=document.createElement('button');
+    b.className='tbl-btn';b.id='btn'+t;
+    b.textContent=`Tabla del ${t}`;
+    b.onclick=()=>selectTabla(t);
+    wrap.appendChild(b);
+  }
+})();
+
+// ── Select tabla ──
+function selectTabla(t){
+  currentTabla=t;
+  // highlight btn
+  document.querySelectorAll('.tbl-btn').forEach(b=>b.classList.remove('active'));
+  if(t==='todas') document.getElementById('btnTodas').classList.add('active');
+  else document.getElementById('btn'+t).classList.add('active');
+
+  // Build rows
+  if(t==='todas'){
+    currentRows=[];
+    for(let tt=1;tt<=10;tt++) currentRows.push(...getTablaRows(tt));
+    currentRows=shuffleArr(currentRows);
+    totalQ=10; currentRows=currentRows.slice(0,10);
+    document.getElementById('infoTitle').textContent='📖 Todas las tablas del 1 al 10';
+  } else {
+    currentRows=getTablaRows(t);
+    totalQ=10;
+    document.getElementById('infoTitle').textContent=`📖 Aprendamos la tabla del ${t}`;
+  }
+
+  buildInfoTabla(t);
+  resetAll();
+  goLevel(1);
+  document.getElementById('sec1').scrollIntoView({behavior:'smooth'});
+}
+
+// ── Info tabla ──
+function buildInfoTabla(t){
+  const grid=document.getElementById('tablaGrid');
+  grid.innerHTML='';
+  if(t==='todas'){
+    for(let tt=1;tt<=10;tt++){
+      getTablaRows(tt).forEach(d=>{
+        grid.innerHTML+=`<div class="tabla-row"><div class="t-animal">${d.animal}</div><div class="t-op">${tt} · ${d.n} =</div><div class="t-res">${d.r}</div></div>`;
+      });
+    }
+  } else {
+    const tn=parseInt(t);
+    // tip general conmutativa
+    let tipHtml='';
+    if(tn>1){
+      const known=[];
+      for(let prev=1;prev<tn;prev++) known.push(`${tn}·${prev} = ${prev}·${tn}`);
+      tipHtml=`
+        <div style="background:rgba(255,209,102,.13);border:1.5px solid rgba(255,209,102,.35);border-radius:16px;padding:14px 16px;margin-bottom:14px;display:flex;gap:10px;align-items:flex-start;">
+          <span style="font-size:1.6rem;flex-shrink:0">💡</span>
+          <div>
+            <div style="font-family:'Fredoka One',cursive;color:#ffd166;font-size:1rem;margin-bottom:6px">¡Ya sabes más de lo que crees!</div>
+            <div style="color:rgba(255,255,255,.75);font-size:.88rem;line-height:1.6">
+              Porque <strong style="color:#ffd166">el orden no cambia el resultado</strong> (propiedad conmutativa ✨),<br>
+              estas operaciones <strong style="color:#a8edaa">¡ya las aprendiste!</strong> con tablas anteriores:<br>
+              <span style="display:flex;flex-wrap:wrap;gap:6px;margin-top:7px">
+                ${known.map(k=>`<span style="background:rgba(168,237,170,.18);border:1px solid #a8edaa55;border-radius:8px;padding:3px 10px;font-family:'Fredoka One',cursive;color:#a8edaa;font-size:.9rem">${k}</span>`).join('')}
+              </span>
+            </div>
+          </div>
+        </div>`;
+    }
+    grid.innerHTML=tipHtml;
+    getTablaRows(tn).forEach(d=>{
+      // mark as "already known" if n < t (conmutativa)
+      const known = d.n < tn;
+      grid.innerHTML+=`
+        <div class="tabla-row" style="${known?'border:1.5px solid rgba(168,237,170,.35);background:rgba(168,237,170,.08)':''}">
+          <div class="t-animal">${d.animal}</div>
+          <div class="t-op" style="${known?'color:#a8edaa':''}">
+            ${tn} · ${d.n} =
+            ${known?`<span style="font-size:.7rem;background:rgba(168,237,170,.2);border-radius:6px;padding:2px 6px;margin-left:4px;vertical-align:middle;color:#a8edaa">✓ ya la sé</span>`:''}
+          </div>
+          <div class="t-res">${d.r}</div>
+        </div>`;
+    });
+  }
+}
+
+// ── Reset ──
+function resetAll(){
+  sc=0;se=0;sr=0;answered=0;
+  q1idx=0;q2idx=0;q3idx=0;
+  updScore();updProg();
+  stopTimer();
+  ['cel1','cel2','cel3'].forEach(id=>document.getElementById(id).classList.remove('show'));
+  ['q1box','q2box','q3box'].forEach(id=>{document.getElementById(id).innerHTML='';document.getElementById(id).style.display='block';});
+}
+
+function restartLevel(n){
+  if(n===1){q1idx=0;document.getElementById('cel1').classList.remove('show');document.getElementById('q1box').style.display='block';document.getElementById('q1box').innerHTML='';buildQ1();}
+  if(n===2){q2idx=0;document.getElementById('cel2').classList.remove('show');document.getElementById('q2box').style.display='block';document.getElementById('q2box').innerHTML='';buildQ2();}
+  if(n===3){q3idx=0;document.getElementById('cel3').classList.remove('show');document.getElementById('q3box').style.display='block';document.getElementById('q3box').innerHTML='';stopTimer();buildQ3();}
+}
+
+// ── Level nav ──
+function goLevel(n){
+  currentLevel=n;
+  [1,2,3].forEach(i=>{
+    document.getElementById('sec'+i).style.display=i===n?'block':'none';
+    document.getElementById('tab'+i).classList.toggle('active',i===n);
+  });
+  if(n===1&&document.getElementById('q1box').innerHTML==='') buildQ1();
+  if(n===2&&document.getElementById('q2box').innerHTML==='') buildQ2();
+  if(n===3&&document.getElementById('q3box').innerHTML===''){stopTimer();buildQ3();}
+}
+
+// ══════════════════════════════
+// NIVEL 1 – GRÁFICO
+// ══════════════════════════════
+function buildQ1(){
+  const box=document.getElementById('q1box');
+  box.innerHTML='';
+  if(q1idx>=currentRows.length){box.style.display='none';document.getElementById('cel1').classList.add('show');return;}
+  const d=currentRows[q1idx];
+  const t=currentTabla==='todas'?Math.round(d.r/d.n):currentTabla;
+  const groups=t, perItem=d.n;
+  let groupsHtml='<div class="groups-row">';
+  for(let g=0;g<groups;g++){
+    groupsHtml+='<div><div class="group-box">';
+    for(let j=0;j<perItem;j++) groupsHtml+=`<span class="item-em">${d.animal}</span>`;
+    groupsHtml+=`</div><div class="grp-lbl">grupo ${g+1}</div></div>`;
+  }
+  groupsHtml+='</div>';
+  box.innerHTML=`
+    <div class="q-box">
+      <div class="q-text">${t} · ${d.n} = ?</div>
+      <div class="q-sub">¡Cuenta todos los ${d.name}! ${d.animal}</div>
+      ${groupsHtml}
+      <div style="color:rgba(255,255,255,.4);font-size:.78rem;margin-top:6px">${groups} grupos · ${perItem} ${d.name} cada uno</div>
+    </div>`;
+  renderOpts(makeOpts(d.r,t),d.r,'fb1','nb1',box,'q1');
+}
+window._q1next=function(){q1idx++;answered++;updProg();buildQ1();};
+
+// ══════════════════════════════
+// NIVEL 2 – MULTIPLICACIÓN
+// ══════════════════════════════
+function buildQ2(){
+  const box=document.getElementById('q2box');
+  box.innerHTML='';
+  if(q2idx>=currentRows.length){box.style.display='none';document.getElementById('cel2').classList.add('show');return;}
+  const d=currentRows[q2idx];
+  const t=currentTabla==='todas'?Math.round(d.r/d.n):currentTabla;
+  box.innerHTML=`
+    <div class="q-box">
+      <div class="q-text">${t} · ${d.n} = ?</div>
+      <div class="q-sub">🦔 ¿Cuánto es ${t} punto ${d.n}?</div>
+    </div>`;
+  renderOpts(makeOpts(d.r,t),d.r,'fb2','nb2',box,'q2');
+}
+window._q2next=function(){q2idx++;answered++;updProg();buildQ2();};
+
+// ══════════════════════════════
+// NIVEL 3 – CONTRARRELOJ
+// ══════════════════════════════
+let timeLeft=14, timerCb=null;
+function stopTimer(){clearInterval(timerInterval);timerInterval=null;}
+
+function buildQ3(){
+  stopTimer();
+  const box=document.getElementById('q3box');
+  box.innerHTML='';
+  if(q3idx>=currentRows.length){box.style.display='none';document.getElementById('cel3').classList.add('show');document.getElementById('finalMsg').textContent=`¡Completaste los 3 niveles! ✅ ${sc} correctas de ${totalQ*3}`;return;}
+  const d=currentRows[q3idx];
+  const t=currentTabla==='todas'?Math.round(d.r/d.n):currentTabla;
+  timeLeft=14;
+
+  box.innerHTML=`
+    <div class="timer-wrap">
+      <div class="timer-circle" id="timerCircle">
+        <svg viewBox="0 0 64 64" width="64" height="64">
+          <circle cx="32" cy="32" r="28" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="5"/>
+          <circle cx="32" cy="32" r="28" fill="none" stroke="#a8edaa" stroke-width="5"
+            stroke-dasharray="176" stroke-dashoffset="0" id="timerArc" style="transition:stroke-dashoffset .1s linear;"/>
+        </svg>
+        <span class="num" id="timerNum">14</span>
+      </div>
+      <div class="timer-bar"><div class="timer-fill" id="timerBar" style="width:100%"></div></div>
+    </div>
+    <div class="q-box">
+      <div class="q-text">${t} · ${d.n} = ?</div>
+      <div class="q-sub">⏱️ ¡Rápido! Tienes 14 segundos</div>
+    </div>`;
+  renderOpts(makeOpts(d.r,t),d.r,'fb3','nb3',box,'q3');
+
+  // Start timer
+  const arc=document.getElementById('timerArc');
+  timerInterval=setInterval(()=>{
+    timeLeft-=.1;
+    const pct=timeLeft/14;
+    document.getElementById('timerNum').textContent=Math.ceil(timeLeft);
+    if(arc) arc.style.strokeDashoffset=(176*(1-pct));
+    const bar=document.getElementById('timerBar');
+    if(bar){bar.style.width=(pct*100)+'%';if(pct<0.35)bar.classList.add('urgent');else bar.classList.remove('urgent');}
+    if(arc) arc.style.stroke=pct<0.35?'#f46161':'#a8edaa';
+    if(timeLeft<=0){
+      clearInterval(timerInterval);
+      // auto-wrong
+      document.querySelectorAll('.opt-btn').forEach(b=>{b.disabled=true;if(parseInt(b.dataset.val)===d.r)b.classList.add('correct');});
+      se++;sr=0;updScore();
+      const fb=document.getElementById('fb3');
+      if(fb){fb.textContent=`⏰ ¡Se acabó el tiempo! Era ${d.r}`;fb.className='feedback wrong';}
+      answered++;updProg();
+      const nb=document.getElementById('nb3');if(nb)nb.classList.add('show');
+    }
+  },100);
+}
+window._q3next=function(){q3idx++;answered++;updProg();stopTimer();buildQ3();};
+
+// ══════════════════════════════
+// GENERIC OPTION RENDERER
+// ══════════════════════════════
+function renderOpts(opts,correct,fbId,nbId,boxEl,lvl){
+  const labels=['A','B','C','D'];
+  let html='<div class="opts-grid">';
+  opts.forEach((v,i)=>{
+    html+=`<button class="opt-btn" data-val="${v}" id="${nbId}ob${i}" onclick="checkOpt(${v},${correct},'${fbId}','${nbId}','${nbId}ob',${lvl==='q3'})">
+      ${labels[i]}) ${v}
+    </button>`;
+  });
+  html+='</div>';
+  html+=`<div class="feedback" id="${fbId}"></div>`;
+  html+=`<div style="text-align:center"><button class="next-btn" id="${nbId}" onclick="window._${lvl}next()">Siguiente ➡️</button></div>`;
+  boxEl.innerHTML+=html;
+}
+
+function checkOpt(val,correct,fbId,nbId,prefix,isTimer){
+  if(isTimer) stopTimer();
+  for(let i=0;i<4;i++){const b=document.getElementById(prefix+i);if(b)b.disabled=true;}
+  const fb=document.getElementById(fbId);
+  const nb=document.getElementById(nbId);
+  if(val===correct){
+    document.getElementById(prefix+[...document.querySelectorAll(`[id^="${prefix}"]`)].findIndex(b=>parseInt(b.dataset.val)===correct)).classList.add('correct');
+    sc++;sr++;
+    if(fb){fb.textContent=praise[Math.floor(Math.random()*praise.length)];fb.className='feedback correct';}
+  } else {
+    document.getElementById(prefix+[...document.querySelectorAll(`[id^="${prefix}"]`)].findIndex(b=>parseInt(b.dataset.val)===val)).classList.add('wrong');
+    document.getElementById(prefix+[...document.querySelectorAll(`[id^="${prefix}"]`)].findIndex(b=>parseInt(b.dataset.val)===correct)).classList.add('correct');
+    se++;sr=0;
+    if(fb){fb.textContent=`${oops[Math.floor(Math.random()*oops.length)]} ${correct}`;fb.className='feedback wrong';}
+  }
+  updScore();
+  if(nb) nb.classList.add('show');
+}
+
+// ── INIT ──
+buildInfoTabla(3);
+selectTabla(3);
+</script>
+</body>
+</html>
