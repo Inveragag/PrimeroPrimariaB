@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aprendiendo con Emilia y Valeria</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --emilia: #FF6B6B;
+    --valeria: #4ECDC4;
+    --sun: #FFE66D;
+    --dark: #1a1a2e;
+    --card-bg: rgba(255,255,255,0.08);
+    --radius: 24px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--dark);
+    min-height: 100vh;
+    overflow-x: hidden;
+    color: white;
+  }
+
+  /* ── Fondo animado con estrellas ── */
+  .stars {
+    position: fixed; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse at 20% 30%, rgba(78,205,196,0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, rgba(255,107,107,0.15) 0%, transparent 50%),
+      var(--dark);
+  }
+  .stars::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, white 0%, transparent 100%),
+      radial-gradient(1px 1px at 25% 40%, white 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 40% 10%, white 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 25%, white 0%, transparent 100%),
+      radial-gradient(1px 1px at 75% 55%, white 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 85% 15%, white 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 80%, white 0%, transparent 100%),
+      radial-gradient(1px 1px at 50% 70%, white 0%, transparent 100%),
+      radial-gradient(1px 1px at 15% 85%, white 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 35% 60%, white 0%, transparent 100%);
+    animation: twinkle 4s ease-in-out infinite alternate;
+  }
+  @keyframes twinkle {
+    from { opacity: 0.5; }
+    to   { opacity: 1; }
+  }
+
+  /* ── Layout principal ── */
+  .container {
+    position: relative; z-index: 1;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 40px 20px;
+  }
+
+  /* ── Header ── */
+  .header {
+    text-align: center;
+    margin-bottom: 50px;
+    animation: fadeDown 0.8s ease both;
+  }
+  .rocket { font-size: 3rem; display: block; animation: float 3s ease-in-out infinite; }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+  .title {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2rem, 6vw, 3.8rem);
+    line-height: 1.1;
+    margin: 12px 0 8px;
+    background: linear-gradient(135deg, var(--emilia), var(--sun), var(--valeria));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 2px 8px rgba(255,230,109,0.3));
+  }
+  .subtitle {
+    font-size: 1.05rem;
+    color: rgba(255,255,255,0.6);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Sección de selección de grado ── */
+  .section-label {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.3rem;
+    color: var(--sun);
+    text-align: center;
+    margin-bottom: 28px;
+    animation: fadeDown 0.9s ease both 0.2s;
+    opacity: 0;
+    animation-fill-mode: forwards;
+  }
+
+  .grade-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    max-width: 640px;
+    width: 100%;
+    animation: fadeUp 0.9s ease both 0.4s;
+    opacity: 0;
+    animation-fill-mode: forwards;
+  }
+
+  .grade-card {
+    background: var(--card-bg);
+    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: var(--radius);
+    padding: 36px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    backdrop-filter: blur(12px);
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    color: white;
+    display: block;
+  }
+  .grade-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: calc(var(--radius) - 2px);
+  }
+  .grade-card.primero::before { background: linear-gradient(135deg, rgba(255,107,107,0.25), rgba(255,230,109,0.15)); }
+  .grade-card.cuarto::before { background: linear-gradient(135deg, rgba(78,205,196,0.25), rgba(255,230,109,0.15)); }
+  .grade-card:hover { transform: translateY(-6px) scale(1.03); }
+  .grade-card.primero:hover { border-color: var(--emilia); box-shadow: 0 16px 40px rgba(255,107,107,0.3); }
+  .grade-card.cuarto:hover  { border-color: var(--valeria); box-shadow: 0 16px 40px rgba(78,205,196,0.3); }
+  .grade-card:hover::before { opacity: 1; }
+
+  .card-emoji { font-size: 3.2rem; display: block; margin-bottom: 14px; }
+  .card-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.5rem;
+    margin-bottom: 6px;
+  }
+  .grade-card.primero .card-title { color: var(--emilia); }
+  .grade-card.cuarto  .card-title { color: var(--valeria); }
+  .card-name {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.5);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .card-badge {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 6px 16px;
+    border-radius: 99px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+  }
+  .grade-card.primero .card-badge { background: rgba(255,107,107,0.2); color: var(--emilia); }
+  .grade-card.cuarto  .card-badge { background: rgba(78,205,196,0.2); color: var(--valeria); }
+
+  /* ── Vista interior: Primero Primaria ── */
+  .inner-section {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 640px;
+    animation: fadeUp 0.5s ease both;
+  }
+  .inner-section.active { display: flex; }
+
+  .back-btn {
+    align-self: flex-start;
+    background: none;
+    border: 2px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.7);
+    border-radius: 99px;
+    padding: 8px 20px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 30px;
+    transition: all 0.2s ease;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .back-btn:hover { border-color: white; color: white; transform: translateX(-3px); }
+
+  .inner-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .primero-title { color: var(--emilia); }
+  .cuarto-title  { color: var(--valeria); }
+
+  .inner-subtitle {
+    color: rgba(255,255,255,0.5);
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 36px;
+  }
+
+  .subject-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    width: 100%;
+  }
+
+  .subject-card {
+    background: var(--card-bg);
+    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 28px 14px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    backdrop-filter: blur(12px);
+    text-decoration: none;
+    color: white;
+    display: block;
+  }
+  .subject-card:hover { transform: translateY(-5px); }
+  .subject-card.math:hover  { border-color: var(--sun);     box-shadow: 0 12px 30px rgba(255,230,109,0.25); }
+  .subject-card.german:hover{ border-color: #a78bfa;        box-shadow: 0 12px 30px rgba(167,139,250,0.25); }
+  .subject-card.spanish:hover{border-color: #34d399;        box-shadow: 0 12px 30px rgba(52,211,153,0.25); }
+
+  .subject-emoji { font-size: 2.5rem; display: block; margin-bottom: 12px; }
+  .subject-name {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+  }
+  .subject-card.math   .subject-name { color: var(--sun); }
+  .subject-card.german .subject-name { color: #a78bfa; }
+  .subject-card.spanish .subject-name{ color: #34d399; }
+  .subject-tag {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  /* ── Vista: Matematica ── */
+  .math-section {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 580px;
+  }
+  .math-section.active { display: flex; animation: fadeUp 0.5s ease both; }
+
+  .math-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .math-header .big-emoji { font-size: 3rem; display: block; margin-bottom: 10px; }
+  .math-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2rem;
+    color: var(--sun);
+    margin-bottom: 6px;
+  }
+  .math-desc {
+    color: rgba(255,255,255,0.5);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .tests-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .test-item {
+    background: rgba(255,230,109,0.07);
+    border: 2px solid rgba(255,230,109,0.2);
+    border-radius: 16px;
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    color: white;
+  }
+  .test-item:hover {
+    border-color: var(--sun);
+    background: rgba(255,230,109,0.15);
+    transform: translateX(4px);
+  }
+  .test-num {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: rgba(255,230,109,0.2);
+    color: var(--sun);
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .test-info { flex: 1; }
+  .test-name {
+    font-weight: 800;
+    font-size: 0.95rem;
+    margin-bottom: 2px;
+  }
+  .test-topic {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.45);
+    font-weight: 600;
+  }
+  .test-arrow {
+    color: var(--sun);
+    font-size: 1.2rem;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+  .test-item:hover .test-arrow { opacity: 1; }
+
+  .add-test-note {
+    text-align: center;
+    padding: 20px;
+    border: 2px dashed rgba(255,230,109,0.25);
+    border-radius: 16px;
+    color: rgba(255,255,255,0.35);
+    font-size: 0.85rem;
+    font-weight: 600;
+    width: 100%;
+  }
+
+  /* ── Animaciones ── */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Footer ── */
+  .footer {
+    position: relative; z-index: 1;
+    text-align: center;
+    padding: 20px;
+    color: rgba(255,255,255,0.25);
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 500px) {
+    .grade-grid { grid-template-columns: 1fr; max-width: 320px; }
+    .subject-grid { grid-template-columns: 1fr; max-width: 280px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stars"></div>
+
+<div class="container">
+
+  <!-- ══ PANTALLA 1: Login / Selección de grado ══ -->
+  <div id="home-screen">
+    <div class="header">
+      <span class="rocket">🚀</span>
+      <h1 class="title">Aprendiendo con<br>Emilia y Valeria</h1>
+      <p class="subtitle">✨ Tu espacio de aprendizaje personalizado ✨</p>
+    </div>
+
+    <p class="section-label">¿Quién va a estudiar hoy?</p>
+
+    <div class="grade-grid">
+      <a class="grade-card primero" onclick="showGrade('primero'); return false;" href="#">
+        <span class="card-emoji">⭐</span>
+        <div class="card-title">1ro Primaria</div>
+        <div class="card-name">Emilia</div>
+        <span class="card-badge">8 años</span>
+      </a>
+      <a class="grade-card cuarto" onclick="showGrade('cuarto'); return false;" href="#">
+        <span class="card-emoji">🏆</span>
+        <div class="card-title">4to Primaria</div>
+        <div class="card-name">Valeria</div>
+        <span class="card-badge">11 años</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ══ PANTALLA 2A: Materias de Primero Primaria ══ -->
+  <div id="primero-screen" class="inner-section">
+    <button class="back-btn" onclick="goHome()">← Regresar</button>
+    <h2 class="inner-title primero-title">⭐ Primero Primaria</h2>
+    <p class="inner-subtitle">Hola Emilia 👋 ¿Qué quieres repasar hoy?</p>
+    <div class="subject-grid">
+      <a class="subject-card math" onclick="showMath('primero'); return false;" href="#">
+        <span class="subject-emoji">🔢</span>
+        <div class="subject-name">Matemática</div>
+        <div class="subject-tag">Números & más</div>
+      </a>
+      <a class="subject-card german" href="#">
+        <span class="subject-emoji">🇩🇪</span>
+        <div class="subject-name">Alemán</div>
+        <div class="subject-tag">Deutsch</div>
+      </a>
+      <a class="subject-card spanish" href="#">
+        <span class="subject-emoji">📖</span>
+        <div class="subject-name">Español</div>
+        <div class="subject-tag">Lengua</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ══ PANTALLA 2B: Materias de Cuarto Primaria ══ -->
+  <div id="cuarto-screen" class="inner-section">
+    <button class="back-btn" onclick="goHome()">← Regresar</button>
+    <h2 class="inner-title cuarto-title">🏆 Cuarto Primaria</h2>
+    <p class="inner-subtitle">Hola Valeria 👋 ¿Qué quieres repasar hoy?</p>
+    <div class="subject-grid">
+      <a class="subject-card math" onclick="showMath('cuarto'); return false;" href="#">
+        <span class="subject-emoji">🔢</span>
+        <div class="subject-name">Matemática</div>
+        <div class="subject-tag">Números & más</div>
+      </a>
+      <a class="subject-card german" href="#">
+        <span class="subject-emoji">🇩🇪</span>
+        <div class="subject-name">Alemán</div>
+        <div class="subject-tag">Deutsch</div>
+      </a>
+      <a class="subject-card spanish" href="#">
+        <span class="subject-emoji">📖</span>
+        <div class="subject-name">Español</div>
+        <div class="subject-tag">Lengua</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ══ PANTALLA 3: Tests de Matemática ══ -->
+  <div id="math-screen" class="math-section">
+    <button class="back-btn" id="math-back-btn" onclick="goBack()">← Regresar</button>
+    <div class="math-header">
+      <span class="big-emoji">🔢</span>
+      <div class="math-title">Matemática</div>
+      <div class="math-desc" id="math-grade-label">Tests de repaso semanales</div>
+    </div>
+
+    <div class="tests-list" id="tests-list">
+      <!-- Los links de tests se agregan aquí -->
+      <!-- EJEMPLO — reemplaza href="#" con los links reales -->
+      <a class="test-item" href="#" target="_blank">
+        <div class="test-num">1</div>
+        <div class="test-info">
+          <div class="test-name">Test Semana 1</div>
+          <div class="test-topic">Próximamente...</div>
+        </div>
+        <span class="test-arrow">→</span>
+      </a>
+    </div>
+
+    <div class="add-test-note">
+      📎 Aquí aparecerán los links de los tests semanales
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<div class="footer">🐾 Hecho con amor por mamá · Toribia & Matilde aprueban este mensaje 🐾</div>
+
+<script>
+  let currentGrade = '';
+
+  function goHome() {
+    document.getElementById('home-screen').style.display = '';
+    document.getElementById('primero-screen').classList.remove('active');
+    document.getElementById('cuarto-screen').classList.remove('active');
+    document.getElementById('math-screen').classList.remove('active');
+  }
+
+  function showGrade(grade) {
+    currentGrade = grade;
+    document.getElementById('home-screen').style.display = 'none';
+    document.getElementById(grade + '-screen').classList.add('active');
+  }
+
+  function showMath(grade) {
+    currentGrade = grade;
+    document.getElementById('primero-screen').classList.remove('active');
+    document.getElementById('cuarto-screen').classList.remove('active');
+    const label = grade === 'primero'
+      ? 'Emilia · 1ro Primaria · Tests semanales'
+      : 'Valeria · 4to Primaria · Tests semanales';
+    document.getElementById('math-grade-label').textContent = label;
+    document.getElementById('math-screen').classList.add('active');
+  }
+
+  function goBack() {
+    document.getElementById('math-screen').classList.remove('active');
+    document.getElementById(currentGrade + '-screen').classList.add('active');
+  }
+</script>
+</body>
+</html>
