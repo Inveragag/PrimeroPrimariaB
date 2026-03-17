@@ -421,7 +421,7 @@
         <div class="subject-name">Matemática</div>
         <div class="subject-tag">Números & más</div>
       </a>
-      <a class="subject-card german" href="#">
+      <a class="subject-card german" onclick="showGerman('primero'); return false;" href="#">
         <span class="subject-emoji">🇩🇪</span>
         <div class="subject-name">Alemán</div>
         <div class="subject-tag">Deutsch</div>
@@ -458,6 +458,31 @@
     </div>
   </div>
 
+  <!-- ══ PANTALLA 3: Tests de Alemán ══ -->
+  <div id="german-section" class="math-section">
+    <button class="back-btn" id="german-back-btn" onclick="goBack()">← Regresar</button>
+    <div class="math-header">
+      <span class="big-emoji">🇩🇪</span>
+      <div class="math-title">Alemán</div>
+      <div class="math-desc" id="german-grade-label">Tests de repaso semanales</div>
+    </div>
+
+    <div class="tests-list" id="german-tests-list">
+      <a class="test-item" href="emilia-quiz-essentrinkenspielen.html" target="_blank">
+        <div class="test-num">1</div>
+        <div class="test-info">
+          <div class="test-name">Verbos Aleman Essen/trinken/spielen/machen</div>
+          <div class="test-topic">Aprende los verbos fundamentales</div>
+        </div>
+        <span class="test-arrow">→</span>
+      </a>
+    </div>
+
+    <div class="add-test-note">
+      📎 Aquí aparecerán los links de los tests semanales
+    </div>
+  </div>
+
   <!-- ══ PANTALLA 3: Tests de Matemática ══ -->
   <div id="math-screen" class="math-section">
     <button class="back-btn" id="math-back-btn" onclick="goBack()">← Regresar</button>
@@ -473,8 +498,8 @@
       <a class="test-item" href="tablasEmilia.html" target="_blank">
         <div class="test-num">1</div>
         <div class="test-info">
-          <div class="test-name">Test Semana 1</div>
-          <div class="test-topic">Próximamente...</div>
+          <div class="test-name">Tablas de multiplicar</div>
+          <div class="test-topic">Aprende las tablas</div>
         </div>
         <span class="test-arrow">→</span>
       </a>
@@ -516,8 +541,20 @@
     document.getElementById('math-screen').classList.add('active');
   }
 
+  function showGerman(grade) {
+    currentGrade = grade;
+    document.getElementById('primero-screen').classList.remove('active');
+    document.getElementById('cuarto-screen').classList.remove('active');
+    const label = grade === 'primero'
+      ? 'Emilia · 1ro Primaria · Tests semanales'
+      : 'Valeria · 4to Primaria · Tests semanales';
+    document.getElementById('german-grade-label').textContent = label;
+    document.getElementById('german-section').classList.add('active');
+  }
+
   function goBack() {
     document.getElementById('math-screen').classList.remove('active');
+    document.getElementById('german-section').classList.remove('active');
     document.getElementById(currentGrade + '-screen').classList.add('active');
   }
 </script>
