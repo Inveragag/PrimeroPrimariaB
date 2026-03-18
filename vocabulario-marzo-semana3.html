@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0a0a1a">
+<title>Vocabulario Marzo Semana 3 — Emilia Aguilar</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a1a;
+    --card: #13132a;
+    --card2: #1a1a35;
+    --accent: #f7c948;
+    --accent2: #ff6b9d;
+    --accent3: #56cfb2;
+    --accent4: #7b68ee;
+    --text: #f0f0ff;
+    --muted: #8888bb;
+    --green: #4ade80;
+    --red: #f87171;
+    --timer-green: #4ade80;
+    --timer-yellow: #facc15;
+    --timer-red: #f87171;
+  }
+
+  html { color-scheme: dark; background: #0a0a1a; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg) !important;
+    color: var(--text) !important;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  #stars-canvas {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0;
+  }
+
+  .container {
+    position: relative; z-index: 1;
+    max-width: 680px; margin: 0 auto;
+    padding: 20px 16px 60px;
+  }
+
+  /* HEADER */
+  .header { text-align: center; padding: 20px 0 6px; }
+  .title {
+    font-family: 'Baloo 2', cursive;
+    font-size: clamp(1.3rem, 4.5vw, 2rem);
+    font-weight: 800;
+    color: #f7c948;
+    text-shadow: 0 0 20px rgba(247,201,72,0.5), 0 2px 4px rgba(0,0,0,0.8);
+    line-height: 1.15; margin-bottom: 2px;
+  }
+  .subtitle {
+    font-size: 0.78rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase;
+  }
+
+  /* WEEK BADGE */
+  .week-badge {
+    display: inline-block; margin: 8px auto 0;
+    background: rgba(86,207,178,0.15); border: 1.5px solid var(--accent3);
+    color: var(--accent3); border-radius: 50px; padding: 4px 16px;
+    font-size: 0.78rem; font-weight: 800; letter-spacing: 1px;
+  }
+
+  /* LEVEL SELECTOR */
+  .level-selector {
+    display: flex; gap: 10px; justify-content: center; margin: 18px 0 10px; flex-wrap: wrap;
+  }
+  .level-btn {
+    padding: 10px 18px; border-radius: 16px; border: 2px solid transparent;
+    font-family: 'Baloo 2', cursive; font-size: 0.88rem; font-weight: 700;
+    cursor: pointer; transition: all 0.2s; background: var(--card2);
+    color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 2px;
+    min-width: 96px;
+  }
+  .level-btn .level-time { font-size: 1.2rem; font-weight: 800; line-height: 1; color: var(--muted); transition: color 0.2s; }
+  .level-btn .level-label { font-size: 0.74rem; }
+  .level-btn:hover { transform: translateY(-2px); }
+  .level-btn.active[data-level="1"] { background: #1a3a1a; border-color: var(--green); color: var(--green); }
+  .level-btn.active[data-level="1"] .level-time { color: var(--green); }
+  .level-btn.active[data-level="2"] { background: #3a1a00; border-color: var(--accent); color: var(--accent); }
+  .level-btn.active[data-level="2"] .level-time { color: var(--accent); }
+  .level-btn.active[data-level="3"] { background: #3a0a0a; border-color: var(--red); color: var(--red); }
+  .level-btn.active[data-level="3"] .level-time { color: var(--red); }
+
+  /* CATEGORY FILTER */
+  .cat-filter {
+    display: flex; gap: 7px; justify-content: center; flex-wrap: wrap; margin-bottom: 18px;
+  }
+  .cat-btn {
+    padding: 5px 14px; border-radius: 50px; border: 1.5px solid var(--muted);
+    background: transparent; color: var(--muted); font-family: 'Nunito', sans-serif;
+    font-size: 0.8rem; font-weight: 700; cursor: pointer; transition: all 0.2s;
+  }
+  .cat-btn.active { border-color: var(--accent3); color: var(--accent3); background: rgba(86,207,178,0.12); }
+  .cat-btn:hover { transform: translateY(-1px); }
+
+  /* STATS BAR */
+  .stats-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--card); border-radius: 16px; padding: 10px 18px; margin-bottom: 14px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .lives { display: flex; gap: 4px; font-size: 1.2rem; }
+  .score-display { font-family: 'Baloo 2', cursive; font-size: 1.1rem; color: var(--accent); font-weight: 800; }
+  .streak-badge {
+    font-size: 0.8rem; font-weight: 800; padding: 4px 10px; border-radius: 50px;
+    background: rgba(247,201,72,0.15); color: var(--accent); border: 1px solid var(--accent);
+    display: none;
+  }
+  .streak-badge.show { display: block; animation: popIn 0.3s ease; }
+
+  /* TIMER */
+  .timer-wrap { margin-bottom: 12px; }
+  .timer-bar-bg { height: 8px; border-radius: 50px; background: rgba(255,255,255,0.08); overflow: hidden; }
+  .timer-bar { height: 100%; border-radius: 50px; transition: width 1s linear, background-color 0.5s; background: var(--timer-green); }
+  .timer-text { text-align: right; font-size: 0.8rem; color: var(--muted); margin-top: 3px; font-weight: 700; }
+
+  /* QUESTION CARD */
+  .question-card {
+    background: var(--card); border-radius: 24px; padding: 24px 20px 20px;
+    border: 1px solid rgba(255,255,255,0.07); margin-bottom: 14px;
+    position: relative; overflow: hidden; min-height: 130px;
+  }
+  .question-card::before {
+    content: ''; position: absolute; top: -40px; right: -40px;
+    width: 120px; height: 120px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(86,207,178,0.12) 0%, transparent 70%);
+  }
+  .question-num { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px; }
+
+  /* MODE LABEL */
+  .mode-label {
+    display: inline-block; font-size: 0.68rem; padding: 2px 8px; border-radius: 50px;
+    margin-bottom: 8px; font-weight: 800; letter-spacing: 1px;
+  }
+  .mode-label.de-es { background: rgba(247,201,72,0.15); color: var(--accent); border: 1px solid var(--accent); }
+  .mode-label.es-de { background: rgba(86,207,178,0.15); color: var(--accent3); border: 1px solid var(--accent3); }
+  .mode-label.fill { background: rgba(123,104,238,0.15); color: var(--accent4); border: 1px solid var(--accent4); }
+
+  .question-text {
+    font-family: 'Baloo 2', cursive; font-size: clamp(1.2rem, 4vw, 1.55rem); font-weight: 700;
+    line-height: 1.3; margin-bottom: 4px;
+  }
+  .question-text .blank {
+    display: inline-block; min-width: 90px; border-bottom: 3px solid var(--accent4);
+    color: var(--accent4); font-style: italic;
+  }
+  .question-hint { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+  .animal-emoji { font-size: 2.4rem; position: absolute; right: 18px; top: 18px; animation: float 3s ease-in-out infinite; }
+
+  /* AUDIO BTN — only plays German */
+  .audio-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(86,207,178,0.18); border: 1.5px solid var(--accent3);
+    color: var(--accent3); border-radius: 50px; padding: 7px 18px;
+    font-family: 'Nunito', sans-serif; font-size: 0.85rem; font-weight: 800;
+    cursor: pointer; transition: all 0.2s; margin-top: 10px;
+  }
+  .audio-btn:hover { background: rgba(86,207,178,0.32); transform: scale(1.04); }
+  .audio-btn:active { transform: scale(0.97); }
+  .audio-btn.playing { background: rgba(86,207,178,0.35); animation: pulse 0.8s ease infinite; }
+
+  /* OPTIONS */
+  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .option-btn {
+    background: var(--card2); border: 2px solid rgba(255,255,255,0.08);
+    border-radius: 16px; padding: 14px 10px; font-family: 'Baloo 2', cursive;
+    font-size: 0.95rem; font-weight: 700; color: var(--text); cursor: pointer;
+    transition: all 0.18s; text-align: center;
+  }
+  .option-btn:hover:not(:disabled) { border-color: var(--accent3); background: rgba(86,207,178,0.12); transform: translateY(-2px); }
+  .option-btn.correct { border-color: var(--green); background: rgba(74,222,128,0.18); color: var(--green); animation: correctPulse 0.4s ease; }
+  .option-btn.wrong { border-color: var(--red); background: rgba(248,113,113,0.18); color: var(--red); animation: shake 0.4s ease; }
+  .option-btn:disabled { cursor: default; }
+
+  /* FEEDBACK */
+  .feedback {
+    text-align: center; font-size: 0.95rem; font-weight: 800; padding: 10px;
+    border-radius: 12px; margin-bottom: 10px; display: none; font-family: 'Baloo 2', cursive;
+  }
+  .feedback.correct { background: rgba(74,222,128,0.15); color: var(--green); display: block; }
+  .feedback.wrong { background: rgba(248,113,113,0.15); color: var(--red); display: block; }
+
+  .next-btn {
+    width: 100%; padding: 14px; border-radius: 16px; border: none;
+    background: linear-gradient(135deg, var(--accent4), var(--accent2));
+    color: white; font-family: 'Baloo 2', cursive; font-size: 1.05rem; font-weight: 800;
+    cursor: pointer; transition: all 0.2s; display: none;
+  }
+  .next-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+  /* SCREENS */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* START SCREEN */
+  #start-screen { text-align: center; padding: 10px 0; }
+  .start-animals { font-size: 2.8rem; margin: 16px 0 8px; animation: bounce 2s ease-in-out infinite; }
+  .vocab-preview {
+    background: var(--card); border-radius: 20px; padding: 18px 20px; margin: 14px 0;
+    border: 1px solid rgba(255,255,255,0.07); text-align: left;
+  }
+  .vocab-preview h3 {
+    font-family: 'Baloo 2', cursive; color: var(--accent3); font-size: 0.85rem;
+    text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; text-align: center;
+  }
+  .vocab-grid-preview {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  }
+  .vocab-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 10px; border-radius: 12px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    font-size: 0.82rem;
+  }
+  .vocab-item .vocab-emoji { font-size: 1.4rem; flex-shrink: 0; }
+  .vocab-item .vocab-words { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .vocab-item .es { color: var(--muted); font-size: 0.72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .vocab-item .de { color: var(--text); font-weight: 800; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .start-desc { color: var(--muted); font-size: 0.9rem; margin: 10px 0 16px; line-height: 1.6; }
+  .level-info { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+  .info-chip {
+    font-size: 0.72rem; padding: 3px 10px; border-radius: 50px;
+    background: rgba(255,255,255,0.06); color: var(--muted); border: 1px solid rgba(255,255,255,0.1);
+  }
+  .start-btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #1a0a00; font-family: 'Baloo 2', cursive; font-size: 1.2rem; font-weight: 800;
+    border: none; border-radius: 50px; padding: 14px 44px; cursor: pointer;
+    transition: all 0.2s; box-shadow: 0 8px 32px rgba(247,201,72,0.3);
+  }
+  .start-btn:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 12px 40px rgba(247,201,72,0.5); }
+
+  /* END SCREEN */
+  #end-screen { text-align: center; padding: 10px 0; }
+  .end-title { font-family: 'Baloo 2', cursive; font-size: 2rem; font-weight: 800; margin-bottom: 8px; }
+  .end-stats {
+    background: var(--card); border-radius: 20px; padding: 22px; margin: 18px 0;
+    border: 1px solid rgba(255,255,255,0.07);
+  }
+  .stat-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .stat-row:last-child { border-bottom: none; }
+  .stat-label { color: var(--muted); font-size: 0.9rem; }
+  .stat-value { font-family: 'Baloo 2', cursive; font-size: 1.2rem; font-weight: 800; color: var(--accent); }
+  .replay-btn {
+    background: linear-gradient(135deg, var(--accent3), var(--accent4));
+    color: white; font-family: 'Baloo 2', cursive; font-size: 1rem; font-weight: 800;
+    border: none; border-radius: 50px; padding: 13px 36px; cursor: pointer;
+    transition: all 0.2s; margin: 6px;
+  }
+  .replay-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+  .confetti-piece {
+    position: fixed; pointer-events: none; z-index: 9999;
+    animation: confettiFall linear forwards;
+  }
+
+  .progress-text { font-size: 0.73rem; color: var(--muted); text-align: center; margin-bottom: 8px; }
+
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+  @keyframes popIn { 0%{transform:scale(0.5);opacity:0} 100%{transform:scale(1);opacity:1} }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+  @keyframes correctPulse { 0%{transform:scale(1)} 50%{transform:scale(1.05)} 100%{transform:scale(1)} }
+  @keyframes confettiFall { 0%{transform:translateY(-20px) rotate(0deg);opacity:1} 100%{transform:translateY(100vh) rotate(720deg);opacity:0} }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+</style>
+</head>
+<body>
+
+<canvas id="stars-canvas"></canvas>
+
+<div class="container">
+  <div class="header">
+    <div class="title">Emilia Aguilar lernt Deutsch! 🦉</div>
+    <div class="subtitle">Vocabulario Marzo · Semana 3</div>
+    <div class="week-badge">🌿 Lernwörter · Neue Wörter</div>
+  </div>
+
+  <!-- SELECTORS (always visible) -->
+  <div class="level-selector">
+    <button class="level-btn active" data-level="1" onclick="setLevel(1)">
+      <span class="level-time">⏱ 30s</span>
+      <span class="level-label">🌱 Nivel 1</span>
+    </button>
+    <button class="level-btn" data-level="2" onclick="setLevel(2)">
+      <span class="level-time">⏱ 20s</span>
+      <span class="level-label">🔥 Nivel 2</span>
+    </button>
+    <button class="level-btn" data-level="3" onclick="setLevel(3)">
+      <span class="level-time">⏱ 10s</span>
+      <span class="level-label">💀 Nivel 3</span>
+    </button>
+  </div>
+
+  <div class="cat-filter">
+    <button class="cat-btn active" data-cat="all" onclick="setCat('all')">Todos</button>
+    <button class="cat-btn" data-cat="verbos" onclick="setCat('verbos')">🏃 Verbos</button>
+    <button class="cat-btn" data-cat="sustantivos" onclick="setCat('sustantivos')">🐸 Sustantivos</button>
+    <button class="cat-btn" data-cat="adjetivos" onclick="setCat('adjetivos')">🎨 Adjetivos</button>
+  </div>
+
+  <!-- START SCREEN -->
+  <div id="start-screen" class="screen active">
+    <div class="start-animals">🐸 🦋 🐠 🦎 🐧 🦜</div>
+
+    <div class="vocab-preview">
+      <h3>📚 Vocabulario Nuevo</h3>
+      <div class="vocab-grid-preview" id="vocab-preview-grid"></div>
+    </div>
+
+    <div class="start-desc">
+      ¡Hola Emilia! 🌟 Aprende las palabras nuevas de esta semana.<br>
+      ¡Escucha cómo se dicen en alemán y elige la respuesta correcta!
+    </div>
+    <div class="level-info" id="level-info-start">
+      <span class="info-chip">⏱ 30 seg por pregunta</span>
+      <span class="info-chip">❤️❤️❤️ 3 vidas</span>
+      <span class="info-chip">12 preguntas</span>
+    </div>
+    <button class="start-btn" onclick="startQuiz()">¡Los geht's! 🎮</button>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div id="quiz-screen" class="screen">
+    <div class="stats-bar">
+      <div class="lives" id="lives-display">❤️❤️❤️</div>
+      <div class="streak-badge" id="streak-badge">🔥 ×<span id="streak-count">0</span></div>
+      <div class="score-display">⭐ <span id="score">0</span></div>
+    </div>
+
+    <div class="progress-text" id="progress-text">Pregunta 1 de 12</div>
+
+    <div class="timer-wrap">
+      <div class="timer-bar-bg"><div class="timer-bar" id="timer-bar"></div></div>
+      <div class="timer-text" id="timer-text">30s</div>
+    </div>
+
+    <div class="question-card">
+      <div class="question-num" id="question-num">Frage 1</div>
+      <div class="mode-label de-es" id="mode-label">🇩🇪 → 🇪🇸</div>
+      <div class="question-text" id="question-text"></div>
+      <div class="question-hint" id="question-hint"></div>
+      <div class="animal-emoji" id="animal-emoji">🐸</div>
+      <!-- Audio plays ONLY the German word/phrase -->
+      <button class="audio-btn" id="audio-btn" onclick="playAudio()">🔊 Auf Deutsch hören</button>
+    </div>
+
+    <div class="options-grid" id="options-grid"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Weiter →</button>
+  </div>
+
+  <!-- END SCREEN -->
+  <div id="end-screen" class="screen">
+    <div class="end-title" id="end-title">🎉 ¡Wunderbar!</div>
+    <div class="end-stats">
+      <div class="stat-row">
+        <span class="stat-label">Puntos totales</span>
+        <span class="stat-value" id="final-score">0</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Exactitud</span>
+        <span class="stat-value" id="final-accuracy">0%</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Mejor racha</span>
+        <span class="stat-value" id="final-streak">0 🔥</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Correctas</span>
+        <span class="stat-value" id="final-correct">0/12</span>
+      </div>
+    </div>
+    <button class="replay-btn" onclick="startQuiz()">🔄 Jugar de nuevo</button>
+    <button class="replay-btn" style="background:linear-gradient(135deg,var(--accent),var(--accent2))" onclick="showStart()">🏠 Menú</button>
+  </div>
+</div>
+
+<script>
+// ─── VOCABULARY DATA ─────────────────────────────────────────────────────────
+// Extracted from the teacher's sheets (NEW words only this week)
+const vocabulary = [
+  // VERBOS (Verben)
+  { de: 'laufen',   es: 'correr',      cat: 'verbos',      article: '',    audioText: 'laufen',     emoji: '🏃' },
+  { de: 'kaufen',   es: 'comprar',     cat: 'verbos',      article: '',    audioText: 'kaufen',     emoji: '🛍️' },
+  { de: 'träumen',  es: 'soñar',       cat: 'verbos',      article: '',    audioText: 'träumen',    emoji: '💭' },
+  { de: 'hören',    es: 'escuchar',    cat: 'verbos',      article: '',    audioText: 'hören',      emoji: '👂' },
+  { de: 'quaken',   es: 'croar',       cat: 'verbos',      article: '',    audioText: 'quaken',     emoji: '🐸' },
+  // ADJETIVOS
+  { de: 'blau',     es: 'azul',        cat: 'adjetivos',   article: '',    audioText: 'blau',       emoji: '🔵' },
+  { de: 'schlau',   es: 'inteligente', cat: 'adjetivos',   article: '',    audioText: 'schlau',     emoji: '🦊' },
+  // SUSTANTIVOS (Nomen)
+  { de: 'Qualle',   es: 'la medusa',   cat: 'sustantivos', article: 'die', audioText: 'die Qualle', emoji: '🪼' },
+  { de: 'Qualm',    es: 'el humo',     cat: 'sustantivos', article: 'der', audioText: 'der Qualm',  emoji: '💨' },
+  { de: 'Quadrat',  es: 'el cuadrado', cat: 'sustantivos', article: 'das', audioText: 'das Quadrat',emoji: '🟦' },
+  { de: 'Frosch',   es: 'la rana',     cat: 'sustantivos', article: 'der', audioText: 'der Frosch', emoji: '🐸' },
+  { de: 'Teich',    es: 'la charca',   cat: 'sustantivos', article: 'der', audioText: 'der Teich',  emoji: '🏞️' },
+  { de: 'Quelle',   es: 'la fuente',   cat: 'sustantivos', article: 'die', audioText: 'die Quelle', emoji: '⛲' },
+  { de: 'Traum',    es: 'el sueño',    cat: 'sustantivos', article: 'der', audioText: 'der Traum',  emoji: '🌙' },
+];
+
+const animals = ['🐸','🦋','🐠','🦎','🐧','🦜','🦊','🐨','🦁','🐸','🦔','🐿️','🦙','🦦','🐺','🦀'];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let currentLevel = 1;
+let selectedCat = 'all';
+let questions = [], qIndex = 0, score = 0, lives = 3, streak = 0, bestStreak = 0;
+let correctCount = 0, timerInterval = null, timeLeft = 30;
+let answered = false, currentQ = null;
+const TOTAL_Q = 12;
+
+// ─── STARS ───────────────────────────────────────────────────────────────────
+(function initStars() {
+  const canvas = document.getElementById('stars-canvas');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  function makeStars() {
+    stars = [];
+    for (let i = 0; i < 160; i++) {
+      stars.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height,
+        r: Math.random()*1.5+0.3, speed: Math.random()*0.4+0.05,
+        alpha: Math.random(), dalpha: (Math.random()-0.5)*0.02 });
+    }
+  }
+  function draw() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    stars.forEach(s => {
+      s.alpha += s.dalpha;
+      if (s.alpha <= 0 || s.alpha >= 1) s.dalpha *= -1;
+      ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle = `rgba(255,255,220,${s.alpha})`; ctx.fill();
+      s.y += s.speed;
+      if (s.y > canvas.height) { s.y = 0; s.x = Math.random()*canvas.width; }
+    });
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize', () => { resize(); makeStars(); });
+  resize(); makeStars(); draw();
+})();
+
+// ─── VOCAB PREVIEW ────────────────────────────────────────────────────────────
+function buildVocabPreview() {
+  const grid = document.getElementById('vocab-preview-grid');
+  grid.innerHTML = '';
+  vocabulary.forEach(v => {
+    const item = document.createElement('div');
+    item.className = 'vocab-item';
+    const displayDE = v.article ? `${v.article} ${v.de}` : v.de;
+    item.innerHTML = `
+      <span class="vocab-emoji">${v.emoji}</span>
+      <span class="vocab-words">
+        <span class="de">${displayDE}</span>
+        <span class="es">${v.es}</span>
+      </span>`;
+    grid.appendChild(item);
+  });
+}
+
+// ─── UI HELPERS ───────────────────────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function setLevel(l) {
+  currentLevel = l;
+  document.querySelectorAll('.level-btn').forEach(b => b.classList.toggle('active', parseInt(b.dataset.level)===l));
+  updateLevelInfo();
+}
+
+function setCat(c) {
+  selectedCat = c;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat===c));
+}
+
+function updateLevelInfo() {
+  const info = document.getElementById('level-info-start');
+  const configs = {
+    1: '⏱ 30 seg · Alemán → Español · Audio disponible',
+    2: '⏱ 20 seg · Español → Alemán · ¡más difícil!',
+    3: '⏱ 10 seg · Mixto · sin audio · ¡trampas!'
+  };
+  info.innerHTML = configs[currentLevel].split(' · ').map(t=>`<span class="info-chip">${t}</span>`).join('');
+}
+
+// ─── QUESTION GENERATION ─────────────────────────────────────────────────────
+function getPool() {
+  let pool = selectedCat === 'all' ? vocabulary : vocabulary.filter(v => v.cat === selectedCat);
+  if (pool.length < 4) pool = vocabulary; // fallback
+  return pool;
+}
+
+function shuffle(arr) {
+  for (let i = arr.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]];
+  }
+  return arr;
+}
+
+function buildQuestions() {
+  const pool = shuffle([...getPool()]);
+  const selected = [];
+  // Ensure variety: cycle through pool if < TOTAL_Q
+  let i = 0;
+  while (selected.length < TOTAL_Q) {
+    selected.push({ ...pool[i % pool.length] });
+    i++;
+  }
+  return selected.map(item => makeQuestion(item));
+}
+
+function makeQuestion(item) {
+  const pool = getPool();
+  // Level 1: DE → ES (hear German, choose Spanish)
+  // Level 2: ES → DE (see Spanish, choose German)
+  // Level 3: Mixed + harder distractors
+  let mode, questionText, hint, options, answer, audioText, modeLabel;
+
+  if (currentLevel === 1) {
+    // German word shown + audio → pick Spanish meaning
+    mode = 'de-es';
+    const displayDE = item.article ? `${item.article} ${item.de}` : item.de;
+    questionText = displayDE;
+    hint = '¿Qué significa en español?';
+    answer = item.es;
+    audioText = item.audioText;
+    modeLabel = '🇩🇪 → 🇪🇸';
+    const distractors = shuffle(pool.filter(v => v.es !== item.es)).slice(0,3).map(v => v.es);
+    options = shuffle([answer, ...distractors]);
+
+  } else if (currentLevel === 2) {
+    // Spanish shown → pick German (with article for nouns)
+    mode = 'es-de';
+    questionText = item.es;
+    hint = '¿Cómo se dice en alemán?';
+    const displayDE = item.article ? `${item.article} ${item.de}` : item.de;
+    answer = displayDE;
+    audioText = item.audioText; // Still plays German when shown
+    modeLabel = '🇪🇸 → 🇩🇪';
+    const distractors = shuffle(pool.filter(v => v.de !== item.de)).slice(0,3).map(v => {
+      return v.article ? `${v.article} ${v.de}` : v.de;
+    });
+    options = shuffle([answer, ...distractors]);
+
+  } else {
+    // Level 3: random mix, harder
+    const flip = Math.random() < 0.5;
+    if (flip) {
+      mode = 'de-es';
+      const displayDE = item.article ? `${item.article} ${item.de}` : item.de;
+      questionText = displayDE;
+      hint = '¿Qué significa?';
+      answer = item.es;
+      audioText = null; // No audio in level 3
+      modeLabel = '🇩🇪 → 🇪🇸';
+      // Harder: mix categories for distractors
+      const distractors = shuffle(vocabulary.filter(v => v.es !== item.es)).slice(0,3).map(v => v.es);
+      options = shuffle([answer, ...distractors]);
+    } else {
+      mode = 'es-de';
+      questionText = item.es;
+      hint = '¿Cómo en alemán?';
+      const displayDE = item.article ? `${item.article} ${item.de}` : item.de;
+      answer = displayDE;
+      audioText = null;
+      modeLabel = '🇪🇸 → 🇩🇪';
+      const distractors = shuffle(vocabulary.filter(v => v.de !== item.de)).slice(0,3).map(v => {
+        return v.article ? `${v.article} ${v.de}` : v.de;
+      });
+      options = shuffle([answer, ...distractors]);
+    }
+  }
+
+  return { questionText, hint, options, answer, audioText, mode, modeLabel, item };
+}
+
+// ─── GAME FLOW ────────────────────────────────────────────────────────────────
+function startQuiz() {
+  questions = buildQuestions();
+  qIndex = 0; score = 0; lives = 3; streak = 0; bestStreak = 0; correctCount = 0;
+  showScreen('quiz-screen');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  if (qIndex >= questions.length || lives <= 0) { endQuiz(); return; }
+  answered = false;
+  currentQ = questions[qIndex];
+  const timeLimit = [30, 20, 10][currentLevel-1];
+  timeLeft = timeLimit;
+
+  document.getElementById('progress-text').textContent = `Pregunta ${qIndex+1} de ${TOTAL_Q}`;
+  document.getElementById('question-num').textContent = `Frage ${qIndex+1}`;
+  document.getElementById('animal-emoji').textContent = animals[Math.floor(Math.random()*animals.length)];
+
+  // Show word emoji + text
+  const emoji = currentQ.item ? currentQ.item.emoji : '';
+  document.getElementById('question-text').innerHTML =
+    emoji ? `<span style="margin-right:8px">${emoji}</span>${currentQ.questionText}` : currentQ.questionText;
+  document.getElementById('question-hint').textContent = currentQ.hint;
+
+  // Mode label
+  const ml = document.getElementById('mode-label');
+  ml.textContent = currentQ.modeLabel;
+  ml.className = 'mode-label ' + currentQ.mode;
+
+  // Audio btn — only in levels 1 and 2
+  const audioBtn = document.getElementById('audio-btn');
+  audioBtn.style.display = (currentLevel === 3 || !currentQ.audioText) ? 'none' : 'inline-flex';
+  audioBtn.classList.remove('playing');
+
+  // Options
+  const grid = document.getElementById('options-grid');
+  grid.innerHTML = '';
+  currentQ.options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = opt;
+    btn.onclick = () => selectAnswer(btn, opt);
+    grid.appendChild(btn);
+  });
+
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('next-btn').style.display = 'none';
+
+  updateLives();
+  updateStreak();
+  startTimer(timeLimit);
+
+  // Auto-play audio on Level 1 for immersion
+  if (currentLevel === 1 && currentQ.audioText) {
+    setTimeout(() => playAudio(), 400);
+  }
+}
+
+function startTimer(limit) {
+  clearInterval(timerInterval);
+  const bar = document.getElementById('timer-bar');
+  const txt = document.getElementById('timer-text');
+  bar.style.transition = 'none';
+  bar.style.width = '100%';
+  bar.style.backgroundColor = 'var(--timer-green)';
+
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    const pct = (timeLeft / limit) * 100;
+    bar.style.transition = 'width 1s linear, background-color 0.5s';
+    bar.style.width = pct + '%';
+    txt.textContent = timeLeft + 's';
+    if (pct < 50) bar.style.backgroundColor = 'var(--timer-yellow)';
+    if (pct < 20) bar.style.backgroundColor = 'var(--timer-red)';
+    if (timeLeft <= 0) { clearInterval(timerInterval); timeUp(); }
+  }, 1000);
+}
+
+function timeUp() {
+  if (answered) return;
+  answered = true;
+  lives--;
+  streak = 0;
+  document.querySelectorAll('.option-btn').forEach(btn => {
+    if (btn.textContent === currentQ.answer) btn.classList.add('correct');
+    btn.disabled = true;
+  });
+  showFeedback(false, '⏰ ¡Se acabó el tiempo! → ' + currentQ.answer);
+  updateLives(); updateStreak();
+  if (lives <= 0) { setTimeout(endQuiz, 1200); return; }
+  document.getElementById('next-btn').style.display = 'block';
+}
+
+function selectAnswer(btn, opt) {
+  if (answered) return;
+  answered = true;
+  clearInterval(timerInterval);
+  window.speechSynthesis.cancel();
+
+  const isCorrect = opt === currentQ.answer;
+  btn.classList.add(isCorrect ? 'correct' : 'wrong');
+  document.querySelectorAll('.option-btn').forEach(b => {
+    b.disabled = true;
+    if (b.textContent === currentQ.answer) b.classList.add('correct');
+  });
+
+  if (isCorrect) {
+    correctCount++;
+    streak++;
+    if (streak > bestStreak) bestStreak = streak;
+    const timeBonus = Math.floor(timeLeft * 2);
+    const streakBonus = streak > 2 ? streak * 5 : 0;
+    score += 10 + timeBonus + streakBonus;
+    document.getElementById('score').textContent = score;
+    showFeedback(true, streak >= 3
+      ? `🔥 ¡Racha de ${streak}! +${10+timeBonus+streakBonus} pts`
+      : `✅ ¡Richtig! +${10+timeBonus} pts`);
+    spawnConfetti();
+    // Play correct German word as reward
+    if (currentQ.item && currentQ.item.audioText) {
+      setTimeout(() => speakGerman(currentQ.item.audioText), 300);
+    }
+  } else {
+    lives--;
+    streak = 0;
+    showFeedback(false, `❌ Richtig: "${currentQ.answer}"`);
+    updateLives();
+    // Speak the correct German word so she hears it
+    if (currentQ.item && currentQ.item.audioText) {
+      setTimeout(() => speakGerman(currentQ.item.audioText), 500);
+    }
+    if (lives <= 0) { setTimeout(endQuiz, 1800); return; }
+  }
+  document.getElementById('score').textContent = score;
+  updateStreak();
+  document.getElementById('next-btn').style.display = 'block';
+}
+
+function showFeedback(correct, msg) {
+  const fb = document.getElementById('feedback');
+  fb.textContent = msg;
+  fb.className = 'feedback ' + (correct ? 'correct' : 'wrong');
+}
+
+function nextQuestion() { qIndex++; renderQuestion(); }
+
+function updateLives() {
+  const hearts = ['','❤️','❤️❤️','❤️❤️❤️'];
+  document.getElementById('lives-display').textContent = lives >= 0 ? (hearts[Math.max(0,lives)] || '') : '';
+}
+
+function updateStreak() {
+  document.getElementById('streak-count').textContent = streak;
+  const badge = document.getElementById('streak-badge');
+  if (streak >= 2) badge.classList.add('show');
+  else badge.classList.remove('show');
+}
+
+function endQuiz() {
+  clearInterval(timerInterval);
+  const accuracy = Math.round((correctCount / TOTAL_Q) * 100);
+  let title = '🎉 ¡Wunderbar!';
+  if (accuracy < 50) title = '💪 ¡Sigue practicando!';
+  else if (accuracy < 80) title = '⭐ ¡Gut gemacht!';
+  else title = '🏆 ¡Ausgezeichnet!';
+
+  document.getElementById('end-title').textContent = title;
+  document.getElementById('final-score').textContent = score + ' pts';
+  document.getElementById('final-accuracy').textContent = accuracy + '%';
+  document.getElementById('final-streak').textContent = bestStreak + ' 🔥';
+  document.getElementById('final-correct').textContent = `${correctCount}/${TOTAL_Q}`;
+  showScreen('end-screen');
+  spawnConfetti(40);
+}
+
+function showStart() { showScreen('start-screen'); }
+
+// ─── AUDIO — GERMAN ONLY ─────────────────────────────────────────────────────
+// Best German pronunciation: de-DE, slow rate for 8-year-old
+function speakGerman(text) {
+  if (!text) return;
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang = 'de-DE';
+  utt.rate = 0.78;   // Slightly slower for clarity
+  utt.pitch = 1.05;  // Natural, slightly warm pitch
+  utt.volume = 1;
+
+  // Try to find best German voice
+  const voices = window.speechSynthesis.getVoices();
+  const germanVoice = voices.find(v => v.lang === 'de-DE' && v.localService) ||
+                      voices.find(v => v.lang === 'de-DE') ||
+                      voices.find(v => v.lang.startsWith('de'));
+  if (germanVoice) utt.voice = germanVoice;
+
+  window.speechSynthesis.speak(utt);
+  return utt;
+}
+
+function playAudio() {
+  if (!currentQ || !currentQ.audioText) return;
+  const btn = document.getElementById('audio-btn');
+  btn.classList.add('playing');
+  const utt = speakGerman(currentQ.audioText);
+  if (utt) {
+    utt.onend = () => btn.classList.remove('playing');
+    utt.onerror = () => btn.classList.remove('playing');
+  } else {
+    setTimeout(() => btn.classList.remove('playing'), 1500);
+  }
+}
+
+// Ensure voices are loaded (some browsers lazy-load)
+if (typeof speechSynthesis !== 'undefined') {
+  speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+  speechSynthesis.getVoices();
+}
+
+// ─── CONFETTI ─────────────────────────────────────────────────────────────────
+function spawnConfetti(count = 16) {
+  const colors = ['#f7c948','#ff6b9d','#56cfb2','#7b68ee','#4ade80','#f87171','#60a5fa'];
+  for (let i = 0; i < count; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.cssText = `
+        left:${Math.random()*100}vw; top:-20px;
+        background:${colors[Math.floor(Math.random()*colors.length)]};
+        width:${6+Math.random()*8}px; height:${6+Math.random()*8}px;
+        border-radius:${Math.random()>0.5?'50%':'2px'};
+        animation-duration:${1.5+Math.random()*2}s;
+        animation-delay:${Math.random()*0.4}s;
+        animation-name: confettiFall;
+        animation-timing-function: linear;
+        animation-fill-mode: forwards;
+        position: fixed; pointer-events: none; z-index: 9999;
+      `;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 4000);
+    }, i * 40);
+  }
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+buildVocabPreview();
+updateLevelInfo();
+</script>
+</body>
+</html>
